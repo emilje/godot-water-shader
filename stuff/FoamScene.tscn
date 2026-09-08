@@ -1,0 +1,230 @@
+[gd_scene format=3 uid="uid://ct103siyho7v8"]
+
+[ext_resource type="Script" uid="uid://ciky32v83vfyi" path="res://stuff/foam_scene.gd" id="1_5me7w"]
+[ext_resource type="Shader" uid="uid://b8fa2bcid54jo" path="res://shaders/displacement_calc.gdshader" id="2_5me7w"]
+[ext_resource type="Shader" uid="uid://b2qhtaxq7psky" path="res://shaders/foam_calc.gdshader" id="3_bdn0s"]
+[ext_resource type="Texture2D" uid="uid://dxg8sejji6v6u" path="res://stuff/sea_foam_seamless_texture.png" id="4_s8har"]
+[ext_resource type="Shader" uid="uid://caultsa30j0i6" path="res://shaders/g_wave.gdshader" id="5_5me7w"]
+[ext_resource type="Shader" uid="uid://ck0gnrqug0ugy" path="res://shaders/history.gdshader" id="6_xb4w7"]
+[ext_resource type="Shader" uid="uid://b7k3nda2gn1hi" path="res://shaders/i_depth.gdshader" id="7_bdn0s"]
+[ext_resource type="Shader" uid="uid://brgp25ukal4h6" path="res://stuff/sphere_move.gdshader" id="7_xb4w7"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_25r3o"]
+sky_top_color = Color(0.26940924, 0.5790968, 1, 1)
+sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+ground_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+
+[sub_resource type="Sky" id="Sky_sehvm"]
+sky_material = SubResource("ProceduralSkyMaterial_25r3o")
+
+[sub_resource type="Environment" id="Environment_jfska"]
+background_mode = 2
+sky = SubResource("Sky_sehvm")
+ssao_radius = 1.16
+ssao_intensity = 8.65
+ssao_power = 1.6643485
+ssao_detail = 5.0
+ssao_horizon = 0.46
+glow_enabled = true
+volumetric_fog_density = 0.1776
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_43fw2"]
+noise_type = 2
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_vvno1"]
+noise = SubResource("FastNoiseLite_43fw2")
+seamless = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_yhtth"]
+shader = ExtResource("2_5me7w")
+shader_parameter/noise = SubResource("NoiseTexture2D_vvno1")
+shader_parameter/noise_intensity = 0.050000002375
+shader_parameter/noise_intensity_x = 0.06000000517907
+shader_parameter/noise_intensity_z = -0.06000000052093002
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_mvh63"]
+viewport_path = NodePath("BottomDepth")
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_xb4w7"]
+viewport_path = NodePath("TopDepth")
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_bdn0s"]
+viewport_path = NodePath("DisplacementSubViewport")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_udkvx"]
+resource_local_to_scene = true
+shader = ExtResource("3_bdn0s")
+shader_parameter/displacement_map = SubResource("ViewportTexture_bdn0s")
+shader_parameter/sea_foam = ExtResource("4_s8har")
+shader_parameter/noise = SubResource("NoiseTexture2D_vvno1")
+shader_parameter/depth_top = SubResource("ViewportTexture_xb4w7")
+shader_parameter/depth_bottom = SubResource("ViewportTexture_mvh63")
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_ksua1"]
+size = Vector2(10, 10)
+subdivide_width = 512
+subdivide_depth = 512
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_dpuiu"]
+viewport_path = NodePath("DisplacementSubViewport")
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_joegw"]
+viewport_path = NodePath("HistoryA")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rfhwr"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("5_5me7w")
+shader_parameter/color = Color(0, 0.21568628, 0.25490198, 1)
+shader_parameter/sampling_distance = 0.01
+shader_parameter/displacement_map = SubResource("ViewportTexture_dpuiu")
+shader_parameter/foam_map = SubResource("ViewportTexture_joegw")
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_d0eyj"]
+viewport_path = NodePath("FoamSubViewport")
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_4s5vi"]
+viewport_path = NodePath("HistoryB")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_th7s7"]
+resource_local_to_scene = true
+shader = ExtResource("6_xb4w7")
+shader_parameter/current_foam = SubResource("ViewportTexture_d0eyj")
+shader_parameter/history_foam = SubResource("ViewportTexture_4s5vi")
+shader_parameter/delta = 0.009339952380952388
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_yygsm"]
+viewport_path = NodePath("FoamSubViewport")
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_u5eeg"]
+viewport_path = NodePath("HistoryA")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_pbenk"]
+resource_local_to_scene = true
+shader = ExtResource("6_xb4w7")
+shader_parameter/current_foam = SubResource("ViewportTexture_yygsm")
+shader_parameter/history_foam = SubResource("ViewportTexture_u5eeg")
+shader_parameter/delta = 0.009339952380952388
+
+[sub_resource type="SphereMesh" id="SphereMesh_l5no5"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ya1k8"]
+render_priority = 0
+shader = ExtResource("7_xb4w7")
+
+[sub_resource type="Environment" id="Environment_xb4w7"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_l5no5"]
+size = Vector2(10, 10)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_5me7w"]
+render_priority = 0
+shader = ExtResource("7_bdn0s")
+
+[sub_resource type="Environment" id="Environment_mvh63"]
+
+[node name="Node3D" type="Node3D" unique_id=1630013092]
+script = ExtResource("1_5me7w")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=263551322]
+transform = Transform3D(1.1924881e-08, 0.70710677, -0.70710677, 0, 0.70710677, 0.70710677, 1, -8.432164e-09, 8.432164e-09, 0, 4.5601606, 0)
+layers = 3
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=17822797]
+environment = SubResource("Environment_jfska")
+
+[node name="DisplacementSubViewport" type="SubViewport" parent="." unique_id=1272659432]
+use_hdr_2d = true
+size = Vector2i(1024, 1024)
+
+[node name="ColorRect" type="ColorRect" parent="DisplacementSubViewport" unique_id=417666503]
+material = SubResource("ShaderMaterial_yhtth")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="FoamSubViewport" type="SubViewport" parent="." unique_id=1766237538]
+size = Vector2i(2048, 2048)
+
+[node name="ColorRect" type="ColorRect" parent="FoamSubViewport" unique_id=1064412325]
+material = SubResource("ShaderMaterial_udkvx")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1289474174]
+mesh = SubResource("PlaneMesh_ksua1")
+surface_material_override/0 = SubResource("ShaderMaterial_rfhwr")
+
+[node name="HistoryA" type="SubViewport" parent="." unique_id=1720288705]
+use_hdr_2d = true
+size = Vector2i(2048, 2048)
+render_target_update_mode = 1
+
+[node name="ColorRect" type="ColorRect" parent="HistoryA" unique_id=24823323]
+material = SubResource("ShaderMaterial_th7s7")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HistoryB" type="SubViewport" parent="." unique_id=401819047]
+use_hdr_2d = true
+size = Vector2i(2048, 2048)
+render_target_update_mode = 0
+
+[node name="ColorRect" type="ColorRect" parent="HistoryB" unique_id=918274233]
+material = SubResource("ShaderMaterial_pbenk")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Sphere" type="MeshInstance3D" parent="." unique_id=547641031]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, 0)
+layers = 3
+mesh = SubResource("SphereMesh_l5no5")
+surface_material_override/0 = SubResource("ShaderMaterial_ya1k8")
+
+[node name="TopDepth" type="SubViewport" parent="." unique_id=1237803608]
+use_hdr_2d = true
+size = Vector2i(128, 128)
+
+[node name="Camera3D" type="Camera3D" parent="TopDepth" unique_id=1324256695]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 10, 0)
+cull_mask = 2
+environment = SubResource("Environment_xb4w7")
+projection = 1
+size = 10.0
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="TopDepth/Camera3D" unique_id=642027414]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1)
+layers = 2
+cast_shadow = 0
+mesh = SubResource("QuadMesh_l5no5")
+surface_material_override/0 = SubResource("ShaderMaterial_5me7w")
+
+[node name="BottomDepth" type="SubViewport" parent="." unique_id=1035603757]
+use_hdr_2d = true
+size = Vector2i(128, 128)
+
+[node name="Camera3D" type="Camera3D" parent="BottomDepth" unique_id=1586773813]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, -10, 0)
+cull_mask = 2
+environment = SubResource("Environment_mvh63")
+projection = 1
+size = 10.0
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="BottomDepth/Camera3D" unique_id=803076881]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1)
+layers = 2
+cast_shadow = 0
+mesh = SubResource("QuadMesh_l5no5")
+surface_material_override/0 = SubResource("ShaderMaterial_5me7w")
