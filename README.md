@@ -14,7 +14,7 @@ A simple water shader project made in Godot 4.
 * Persisting Jacobian foam
 * Persisting intersection foam
 
-<div align="center" >
-  <img src="media/p1.gif" width="48%">
-  <img src="media/p2.gif" width="48%">
+<div>
+  <img src="media/p1.gif">
+  <img src="media/p2.gif">
 </div>
