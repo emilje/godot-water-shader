@@ -69,7 +69,7 @@ subdivide_depth = 512
 viewport_path = NodePath("DisplacementSubViewport")
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_joegw"]
-viewport_path = NodePath("HistoryA")
+viewport_path = NodePath("HistoryB")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_rfhwr"]
 resource_local_to_scene = true
@@ -91,7 +91,7 @@ resource_local_to_scene = true
 shader = ExtResource("6_xb4w7")
 shader_parameter/current_foam = SubResource("ViewportTexture_d0eyj")
 shader_parameter/history_foam = SubResource("ViewportTexture_4s5vi")
-shader_parameter/delta = 0.009339952380952388
+shader_parameter/delta = 0.006944444444444445
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_yygsm"]
 viewport_path = NodePath("FoamSubViewport")
@@ -104,15 +104,17 @@ resource_local_to_scene = true
 shader = ExtResource("6_xb4w7")
 shader_parameter/current_foam = SubResource("ViewportTexture_yygsm")
 shader_parameter/history_foam = SubResource("ViewportTexture_u5eeg")
-shader_parameter/delta = 0.009339952380952388
+shader_parameter/delta = 0.006944444444444445
 
 [sub_resource type="SphereMesh" id="SphereMesh_l5no5"]
+radius = 0.6
+height = 1.2
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_ya1k8"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bdn0s"]
 render_priority = 0
 shader = ExtResource("7_xb4w7")
 
-[sub_resource type="Environment" id="Environment_xb4w7"]
+[sub_resource type="Environment" id="Environment_yygsm"]
 
 [sub_resource type="QuadMesh" id="QuadMesh_l5no5"]
 size = Vector2(10, 10)
@@ -121,7 +123,7 @@ size = Vector2(10, 10)
 render_priority = 0
 shader = ExtResource("7_bdn0s")
 
-[sub_resource type="Environment" id="Environment_mvh63"]
+[sub_resource type="Environment" id="Environment_j6enu"]
 
 [node name="Node3D" type="Node3D" unique_id=1630013092]
 script = ExtResource("1_5me7w")
@@ -164,7 +166,7 @@ surface_material_override/0 = SubResource("ShaderMaterial_rfhwr")
 [node name="HistoryA" type="SubViewport" parent="." unique_id=1720288705]
 use_hdr_2d = true
 size = Vector2i(2048, 2048)
-render_target_update_mode = 1
+render_target_update_mode = 0
 
 [node name="ColorRect" type="ColorRect" parent="HistoryA" unique_id=24823323]
 material = SubResource("ShaderMaterial_th7s7")
@@ -177,7 +179,7 @@ grow_vertical = 2
 [node name="HistoryB" type="SubViewport" parent="." unique_id=401819047]
 use_hdr_2d = true
 size = Vector2i(2048, 2048)
-render_target_update_mode = 0
+render_target_update_mode = 1
 
 [node name="ColorRect" type="ColorRect" parent="HistoryB" unique_id=918274233]
 material = SubResource("ShaderMaterial_pbenk")
@@ -188,10 +190,10 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Sphere" type="MeshInstance3D" parent="." unique_id=547641031]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
 layers = 3
 mesh = SubResource("SphereMesh_l5no5")
-surface_material_override/0 = SubResource("ShaderMaterial_ya1k8")
+surface_material_override/0 = SubResource("ShaderMaterial_bdn0s")
 
 [node name="TopDepth" type="SubViewport" parent="." unique_id=1237803608]
 use_hdr_2d = true
@@ -200,7 +202,7 @@ size = Vector2i(128, 128)
 [node name="Camera3D" type="Camera3D" parent="TopDepth" unique_id=1324256695]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 10, 0)
 cull_mask = 2
-environment = SubResource("Environment_xb4w7")
+environment = SubResource("Environment_yygsm")
 projection = 1
 size = 10.0
 
@@ -218,7 +220,7 @@ size = Vector2i(128, 128)
 [node name="Camera3D" type="Camera3D" parent="BottomDepth" unique_id=1586773813]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, -10, 0)
 cull_mask = 2
-environment = SubResource("Environment_mvh63")
+environment = SubResource("Environment_j6enu")
 projection = 1
 size = 10.0
 

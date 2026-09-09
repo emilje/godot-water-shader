@@ -44,6 +44,12 @@ void fragment() {
 	float y_bottom = texture(depth_bottom, vec2(disp_uv.x, 1.0 - disp_uv.y)).r;
 	float y_water = disp.y;
 	
+	// Reference i_depth_shader comments
+	#if(CURRENT_RENDERER == RENDERER_COMPATIBILITY)
+	y_top = mix(-10, 10, y_top);
+	y_bottom = mix(-10, 10, y_bottom);
+	#endif
+	
 	float over = y_top - y_water;
 	float under = y_water - y_bottom;
 	over = smoothstep(0,0.15, over);
