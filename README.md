@@ -18,7 +18,7 @@ A simple water shader project made in Godot 4.
 - Refractions
 
 <div>
+  <video src="https://github.com/user-attachments/assets/effc825d-3c1c-45bc-8c1f-c25df8bc09bc"></video>
   <img src="media/p1.gif">
   <img src="media/p2.gif">
-  <video src="media/p3.mp4">
 </div>
