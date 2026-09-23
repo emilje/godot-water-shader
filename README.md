@@ -10,9 +10,12 @@ A simple water shader project made in Godot 4.
 
 ## Features
 
-* Gerstner waves
-* Persisting Jacobian foam
-* Persisting intersection foam
+- Gerstner waves
+- Persisting Jacobian foam
+- Persisting intersection foam
+- Non persisting intersection "strip" foam
+- Depth fading with adjustable light attenuation
+- Refractions
 
 <div>
   <img src="media/p1.gif">
