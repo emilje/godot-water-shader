@@ -20,4 +20,5 @@ A simple water shader project made in Godot 4.
 <div>
   <img src="media/p1.gif">
   <img src="media/p2.gif">
+  <video src="media/p3.mp4">
 </div>
