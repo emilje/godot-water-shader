@@ -6,7 +6,7 @@ uniform float noise_intensity_z: hint_range(-0.3,0.3) = 0.2;
 
 vec3 gerstner(vec2 pos, vec2 direction, float amplitude, float frequency, float speed, float steepness) {
 	direction = normalize(direction);
-	float noise_value = texture(noise, (pos/10.0+0.5)*2.0 + TIME * direction * 0.07).r;
+	float noise_value = texture(noise, (pos/10.0+0.5) * 2.0 + TIME * direction * 0.07).r;
 	float phase = (TIME * speed + dot(direction, pos) * frequency);
 	vec3 displacement;
 	displacement.y = sin(phase) * amplitude + noise_value * noise_intensity - noise_intensity/2.0;

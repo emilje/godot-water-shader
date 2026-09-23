@@ -19,11 +19,6 @@ config/icon="res://stuff/icon.svg"
 
 window/vsync/vsync_mode=0
 
-[editor]
-
-movie_writer/video_quality=1.0
-movie_writer/movie_file="C:/Users/Emil/Desktop/test2.avi"
-
 [input]
 
 Left={
@@ -61,7 +56,7 @@ common/physics_interpolation=true
 
 rendering_device/driver.windows="d3d12"
 lights_and_shadows/directional_shadow/soft_shadow_filter_quality=3
-anti_aliasing/quality/msaa_3d=3
+anti_aliasing/quality/msaa_3d=2
 occlusion_culling/size/mode=0
 occlusion_culling/size/viewport_height=1080
 occlusion_culling/size/viewport_width=1920

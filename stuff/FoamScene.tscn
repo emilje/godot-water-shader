@@ -4,10 +4,9 @@
 [ext_resource type="Shader" uid="uid://b8fa2bcid54jo" path="res://shaders/displacement_calc.gdshader" id="2_5me7w"]
 [ext_resource type="Shader" uid="uid://b2qhtaxq7psky" path="res://shaders/foam_calc.gdshader" id="3_bdn0s"]
 [ext_resource type="Texture2D" uid="uid://dxg8sejji6v6u" path="res://stuff/sea_foam_seamless_texture.png" id="4_s8har"]
-[ext_resource type="Shader" uid="uid://caultsa30j0i6" path="res://shaders/g_wave.gdshader" id="5_5me7w"]
+[ext_resource type="Shader" uid="uid://caultsa30j0i6" path="res://shaders/g_wave.gdshader" id="5_xb4w7"]
 [ext_resource type="Shader" uid="uid://ck0gnrqug0ugy" path="res://shaders/history.gdshader" id="6_xb4w7"]
 [ext_resource type="Shader" uid="uid://b7k3nda2gn1hi" path="res://shaders/i_depth.gdshader" id="7_bdn0s"]
-[ext_resource type="Shader" uid="uid://brgp25ukal4h6" path="res://stuff/sphere_move.gdshader" id="7_xb4w7"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_25r3o"]
 sky_top_color = Color(0.26940924, 0.5790968, 1, 1)
@@ -25,8 +24,6 @@ ssao_intensity = 8.65
 ssao_power = 1.6643485
 ssao_detail = 5.0
 ssao_horizon = 0.46
-glow_enabled = true
-volumetric_fog_density = 0.1776
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_43fw2"]
 noise_type = 2
@@ -71,14 +68,23 @@ viewport_path = NodePath("DisplacementSubViewport")
 [sub_resource type="ViewportTexture" id="ViewportTexture_joegw"]
 viewport_path = NodePath("HistoryB")
 
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_mvh63"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_xb4w7"]
+noise = SubResource("FastNoiseLite_mvh63")
+seamless = true
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_rfhwr"]
 resource_local_to_scene = true
 render_priority = 0
-shader = ExtResource("5_5me7w")
+shader = ExtResource("5_xb4w7")
 shader_parameter/color = Color(0, 0.21568628, 0.25490198, 1)
 shader_parameter/sampling_distance = 0.01
 shader_parameter/displacement_map = SubResource("ViewportTexture_dpuiu")
 shader_parameter/foam_map = SubResource("ViewportTexture_joegw")
+shader_parameter/absorption_strength = 1.25
+shader_parameter/color_absorption = Vector3(1.3, 0.4, 0.6)
+shader_parameter/i_noise_texture = SubResource("NoiseTexture2D_xb4w7")
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_d0eyj"]
 viewport_path = NodePath("FoamSubViewport")
@@ -91,7 +97,7 @@ resource_local_to_scene = true
 shader = ExtResource("6_xb4w7")
 shader_parameter/current_foam = SubResource("ViewportTexture_d0eyj")
 shader_parameter/history_foam = SubResource("ViewportTexture_4s5vi")
-shader_parameter/delta = 0.006944444444444445
+shader_parameter/delta = 0.008644888888888888
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_yygsm"]
 viewport_path = NodePath("FoamSubViewport")
@@ -104,17 +110,7 @@ resource_local_to_scene = true
 shader = ExtResource("6_xb4w7")
 shader_parameter/current_foam = SubResource("ViewportTexture_yygsm")
 shader_parameter/history_foam = SubResource("ViewportTexture_u5eeg")
-shader_parameter/delta = 0.006944444444444445
-
-[sub_resource type="SphereMesh" id="SphereMesh_l5no5"]
-radius = 0.6
-height = 1.2
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_bdn0s"]
-render_priority = 0
-shader = ExtResource("7_xb4w7")
-
-[sub_resource type="Environment" id="Environment_yygsm"]
+shader_parameter/delta = 0.008644888888888888
 
 [sub_resource type="QuadMesh" id="QuadMesh_l5no5"]
 size = Vector2(10, 10)
@@ -123,7 +119,12 @@ size = Vector2(10, 10)
 render_priority = 0
 shader = ExtResource("7_bdn0s")
 
-[sub_resource type="Environment" id="Environment_j6enu"]
+[sub_resource type="SphereMesh" id="SphereMesh_l5no5"]
+radius = 1.0
+height = 2.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_mvh63"]
+resource_local_to_scene = true
 
 [node name="Node3D" type="Node3D" unique_id=1630013092]
 script = ExtResource("1_5me7w")
@@ -160,6 +161,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1289474174]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.010787964, 0.011385918, 0.006756246)
 mesh = SubResource("PlaneMesh_ksua1")
 surface_material_override/0 = SubResource("ShaderMaterial_rfhwr")
 
@@ -189,12 +191,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Sphere" type="MeshInstance3D" parent="." unique_id=547641031]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
-layers = 3
-mesh = SubResource("SphereMesh_l5no5")
-surface_material_override/0 = SubResource("ShaderMaterial_bdn0s")
-
 [node name="TopDepth" type="SubViewport" parent="." unique_id=1237803608]
 use_hdr_2d = true
 size = Vector2i(128, 128)
@@ -202,7 +198,6 @@ size = Vector2i(128, 128)
 [node name="Camera3D" type="Camera3D" parent="TopDepth" unique_id=1324256695]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 10, 0)
 cull_mask = 2
-environment = SubResource("Environment_yygsm")
 projection = 1
 size = 10.0
 
@@ -220,7 +215,6 @@ size = Vector2i(128, 128)
 [node name="Camera3D" type="Camera3D" parent="BottomDepth" unique_id=1586773813]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, -10, 0)
 cull_mask = 2
-environment = SubResource("Environment_j6enu")
 projection = 1
 size = 10.0
 
@@ -230,3 +224,43 @@ layers = 2
 cast_shadow = 0
 mesh = SubResource("QuadMesh_l5no5")
 surface_material_override/0 = SubResource("ShaderMaterial_5me7w")
+
+[node name="Sphere" type="MeshInstance3D" parent="." unique_id=547641031]
+layers = 3
+mesh = SubResource("SphereMesh_l5no5")
+surface_material_override/0 = SubResource("ShaderMaterial_mvh63")
+
+[node name="Sphere2" type="MeshInstance3D" parent="." unique_id=1438098008]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.179834, -1.3567486)
+mesh = SubResource("SphereMesh_l5no5")
+surface_material_override/0 = SubResource("ShaderMaterial_mvh63")
+
+[node name="Sphere3" type="MeshInstance3D" parent="." unique_id=2067818931]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -4.434368, -1.3567486)
+mesh = SubResource("SphereMesh_l5no5")
+surface_material_override/0 = SubResource("ShaderMaterial_mvh63")
+
+[node name="Sphere4" type="MeshInstance3D" parent="." unique_id=1835198479]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -6.786396, -1.3567486)
+mesh = SubResource("SphereMesh_l5no5")
+surface_material_override/0 = SubResource("ShaderMaterial_mvh63")
+
+[node name="Sphere5" type="MeshInstance3D" parent="." unique_id=960774782]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.0938344, 0.7515464)
+mesh = SubResource("SphereMesh_l5no5")
+surface_material_override/0 = SubResource("ShaderMaterial_mvh63")
+
+[node name="Sphere6" type="MeshInstance3D" parent="." unique_id=188103248]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -5.3483686, 0.7515464)
+mesh = SubResource("SphereMesh_l5no5")
+surface_material_override/0 = SubResource("ShaderMaterial_mvh63")
+
+[node name="Sphere7" type="MeshInstance3D" parent="." unique_id=904885782]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -7.7003965, 0.7515464)
+mesh = SubResource("SphereMesh_l5no5")
+surface_material_override/0 = SubResource("ShaderMaterial_mvh63")
+
+[node name="Sphere8" type="MeshInstance3D" parent="." unique_id=873725604]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -9.077492, -1.4054947)
+mesh = SubResource("SphereMesh_l5no5")
+surface_material_override/0 = SubResource("ShaderMaterial_mvh63")
