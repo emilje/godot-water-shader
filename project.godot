@@ -17,12 +17,16 @@ config/icon="res://icon.svg"
 
 [display]
 
+window/size/viewport_width=1920
+window/size/viewport_height=1080
+window/size/resizable=false
 window/vsync/vsync_mode=0
 
 [editor]
 
 movie_writer/video_quality=0.9
-movie_writer/movie_file="C:/Users/Emil/Desktop/water_ex.avi"
+movie_writer/movie_file="C:/Users/Emil/Desktop/second_avi.avi"
+movie_writer/fps=240
 
 [input]
 
@@ -61,6 +65,14 @@ common/physics_interpolation=true
 
 rendering_device/driver.windows="d3d12"
 textures/vram_compression/import_etc2_astc=true
+anti_aliasing/quality/screen_space_aa=2
 occlusion_culling/size/mode=0
 occlusion_culling/size/viewport_height=1080
 occlusion_culling/size/viewport_width=1920
+
+[shader_globals]
+
+flat_point={
+"type": "vec2",
+"value": Vector2(0, 0)
+}

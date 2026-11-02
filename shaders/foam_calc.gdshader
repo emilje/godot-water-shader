@@ -9,12 +9,43 @@ uniform float noise_intensity_z: hint_range(-0.3, 0.3) = 0.02;
 uniform vec2 capture_center;
 uniform float capture_coverage;
 uniform float depth_coverage;
+global uniform vec2 flat_point;
 
-vec3 gerstner(vec2 pos, vec2 direction, float amplitude, float frequency, float speed, float steepness) {
-   	direction = normalize(direction);
-	float noise_value = texture(noise, pos * 0.2 + TIME * direction * 0.07).r;
-	float phase = (TIME * speed + dot(direction, pos) * frequency);
+group_uniforms Pattern;
+uniform sampler2D world_disp_noise: repeat_enable;
+uniform float disp_noise_uv: hint_range(0,500) = 160.0;
+uniform float smoothstep_low: hint_range(0,1) = 0.2;
+uniform float smoothstep_high: hint_range(0,1) = 0.75;
+uniform float amplitude_effect:hint_range(0, 1) = 0.7;
+
+group_uniforms Warp;
+uniform float warp_uv_x = 700.0;
+uniform float warp_uv_y = 500.0;
+uniform float warp_speed:hint_range(0, 0.01) = 0.005;
+uniform vec2 warp_strength = vec2(15.0,10.0);
+
+vec3 gerstner(vec2 pos, float angle, float amplitude, float wavelength, float speed, float steepness) {
+	angle=radians(angle);
+	vec2 direction = normalize(vec2(sin(-angle), cos(angle)));
+	
+	// Amplitude noise
+    float noise_a = texture(world_disp_noise, pos/disp_noise_uv).r;
+	float amplitude_noise = smoothstep(smoothstep_low, smoothstep_high,noise_a) * amplitude_effect + 1.0 - amplitude_effect;
+	amplitude *= amplitude_noise;
+	
+	// Domain warping
+	float pos_warp_x = texture(world_disp_noise, pos / warp_uv_x + vec2(1) * TIME * warp_speed).r;
+	float pos_warp_y = texture(world_disp_noise, pos / warp_uv_y + vec2(1) * TIME * warp_speed).r;
+	vec2 pos_warp = vec2(pos_warp_x, pos_warp_y);
+	pos_warp = (pos_warp * 2.0 - 1.0) * warp_strength;
+	vec2 warped_pos = pos + pos_warp;
+
+	float frequency = TAU / wavelength;
+	float phase = (TIME * speed + dot(direction, warped_pos)) * frequency;
+
 	vec3 displacement;
+	
+	float noise_value = texture(noise, pos * 0.2 + TIME * direction * 0.2).r;
 	displacement.y = sin(phase) * amplitude + noise_value * 0.05 - 0.05/2.0;
 	displacement.xz = direction * cos(phase) * steepness;
 	
@@ -26,11 +57,16 @@ vec3 gerstner(vec2 pos, vec2 direction, float amplitude, float frequency, float 
 }
 
 vec3 wave(vec2 pos) {
-	vec3 displacement = gerstner(pos, vec2(0,1), 0.4, 1, 1.3, 0.2);
-	displacement += gerstner(pos, vec2(1,1), 0.15, 1.3, 1.6, 0.12);
-	displacement += gerstner(pos, vec2(0.5,1), 0.12, 2.0, 2.0, 0.17);
-	displacement += gerstner(pos, vec2(-0.4,1), 0.01, 3.0, 3.0, 0.1);
-	displacement += gerstner(pos, vec2(-0.2,0.7), 0.025, 4.0, 4.0, 0.08);
+		vec3 displacement = gerstner(pos, 0.0, 4.3, 120, 5, 0.8);
+		displacement += gerstner(pos, 7.0, 4.1, 80, 8, 0.6);
+		displacement += gerstner(pos, 15, 0.8, 20, 3, 0.8);
+		displacement += gerstner(pos, -45, 0.4, 13, 5, 0.2);
+		
+		//float flat_point_distance = distance(pos, flat_point);
+		//if(flat_point_distance < 100.0) {
+			//float inten =  smoothstep(5,100, flat_point_distance);
+			//displacement *= inten;
+		//}
 	
 	return displacement;
 }

@@ -2,11 +2,12 @@
 class_name FoamSubviewport
 extends SubViewport
 
-@export_range(0, 100) var capture_coverage: int = 10
+@export_range(0, 500) var capture_coverage: int = 10
 @export var history_a: SubViewport
 @export var history_b: SubViewport
 @export_range(0, 5) var decay_rate: float = 0.2
 @export_range(0, 5) var erosion_multiplier: float = 3.0
+@export_range(1, 120) var update_hz := 60.0
 
 @onready var m_foam: ShaderMaterial = $ColorRect.material
 
@@ -18,8 +19,13 @@ var history_initialized := false
 var foam_texture: Texture2D
 var previous_center := Vector2.ZERO
 var capture_center := Vector2.ZERO
+var elapsed_s := 0.0
 
-func update(delta: float, center: Vector2) -> void:
+func can_update(delta: float):
+	elapsed_s += delta
+	return elapsed_s >= 1/update_hz
+
+func update(center: Vector2) -> void:
 	if !history_initialized:
 		if !init_history():
 			return
@@ -27,23 +33,21 @@ func update(delta: float, center: Vector2) -> void:
 	update_history_resolution()
 	update_capture_center(center)
 
-	m_history_a.set_shader_parameter("delta", delta)
-	m_history_a.set_shader_parameter("decay_rate", decay_rate)
-	m_history_a.set_shader_parameter("erosion_multiplier", erosion_multiplier)
-	m_history_b.set_shader_parameter("delta", delta)
-	m_history_b.set_shader_parameter("decay_rate", decay_rate)
-	m_history_b.set_shader_parameter("erosion_multiplier", erosion_multiplier)
+	var material = m_history_a if write_a else m_history_b
+	var target = history_a if write_a else history_b
+	var previous = history_b if write_a else history_a
 
-	if write_a:
-		history_a.render_target_update_mode = SubViewport.UPDATE_ONCE
-		history_b.render_target_update_mode = SubViewport.UPDATE_DISABLED
-		foam_texture = history_a.get_texture()
-	else:
-		history_b.render_target_update_mode = SubViewport.UPDATE_ONCE
-		history_a.render_target_update_mode = SubViewport.UPDATE_DISABLED
-		foam_texture = history_b.get_texture()
+	material.set_shader_parameter("delta", elapsed_s)
+	material.set_shader_parameter("decay_rate", decay_rate)
+	material.set_shader_parameter("erosion_multiplier", erosion_multiplier)
+
+	render_target_update_mode = SubViewport.UPDATE_ONCE
+	target.render_target_update_mode = SubViewport.UPDATE_ONCE
+	previous.render_target_update_mode = SubViewport.UPDATE_DISABLED
+	foam_texture = target.get_texture()
 
 	write_a = !write_a
+	elapsed_s = 0
 
 func update_capture_center(center: Vector2) -> void:
 	capture_center = center
@@ -76,6 +80,7 @@ func update_history_resolution() -> void:
 	foam_resolution = size
 	history_a.size = size
 	history_b.size = size
+
 	m_foam.set_shader_parameter("foam_resolution", Vector2(size))
 
 func init_history() -> bool:
@@ -96,9 +101,10 @@ func init_history() -> bool:
 	return true
 
 func set_enabled(enabled: bool, updateFoamMaps: Callable) -> void:
-	render_target_update_mode = SubViewport.UPDATE_ALWAYS if enabled else SubViewport.UPDATE_DISABLED
+	render_target_update_mode = SubViewport.UPDATE_DISABLED
 	history_a.render_target_update_mode = SubViewport.UPDATE_DISABLED
 	history_b.render_target_update_mode = SubViewport.UPDATE_DISABLED
+	elapsed_s = 0
 
 	if(!enabled):
 		var image = Image.create(1,1,false, Image.FORMAT_R8)

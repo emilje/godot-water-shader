@@ -22,12 +22,14 @@ void fragment() {
 	
 	vec2 world_xz = capture_center + (UV - 0.5) * capture_coverage;
 	vec2 world_uv = world_xz / 15.0;
-	float noise_erosion = texture(erosion_noise, world_uv * 24.0).r;
+	float noise_erosion = texture(erosion_noise, world_uv * 6.0).r;
 	previous.r -= noise_erosion * delta * erosion_multiplier;
-	previous.g -= noise_erosion * delta * erosion_multiplier * 0.1;
+	if(previous.g > 0.7) {
+		previous.g -= noise_erosion * delta * erosion_multiplier * 0.1;
+	}
 	
 	previous.r *= exp(-decay_rate * delta);
-	previous.g *= exp(-decay_rate * delta * 0.3);
+	previous.g *= exp(-decay_rate * delta * 0.1);
 	
 	previous = max(previous,0.0);
 	

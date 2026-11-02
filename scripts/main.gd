@@ -1,10 +1,13 @@
 @tool
 extends Node3D
+@export var tiles: Node3D
 
 @onready var ocean: MeshInstance3D = $Ocean
 
 @onready var foam_sub_near: FoamSubviewport = $FoamSubViewport
 @onready var foam_sub_far: FoamSubviewport = $FoamSubViewportFar
+@onready var foam_top_depth = $TopDepth
+@onready var foam_bottom_depth = $BottomDepth
 
 @onready var top_depth_camera: Camera3D = $TopDepth/Camera3D
 @onready var bottom_depth_camera: Camera3D = $BottomDepth/Camera3D
@@ -28,22 +31,25 @@ func _ready() -> void:
 func _process(delta) -> void:
 	var capture_center := calc_capture_center()
 	var depth_coverage := foam_sub_far.capture_coverage
-	update_depth_cameras(capture_center)
+	update_patches_center()
 
-	foam_sub_near.set_depth_coverage(depth_coverage)
-	foam_sub_far.set_depth_coverage(depth_coverage)
+	var cun = near_foam && foam_sub_near.can_update(delta)
+	var cuf = far_foam && foam_sub_far.can_update(delta)
 
-	if(near_foam || far_foam):
+	if(cun || cuf):
+		update_depth_cameras(capture_center)
 		ocean_material.set_shader_parameter("foam_center", capture_center)
 
-	if(near_foam):
-		foam_sub_near.update(delta, capture_center)
+	if(near_foam && cun):
+		foam_sub_near.set_depth_coverage(depth_coverage)
+		foam_sub_near.update(capture_center)
 		if foam_sub_near.foam_texture != null:
 			ocean_material.set_shader_parameter("foam_map_near", foam_sub_near.foam_texture)
 			ocean_material.set_shader_parameter("foam_coverage", foam_sub_near.capture_coverage)
 
-	if(far_foam):
-		foam_sub_far.update(delta, capture_center)
+	if(far_foam && cuf):
+		foam_sub_far.set_depth_coverage(depth_coverage)
+		foam_sub_far.update(capture_center)
 		if foam_sub_far.foam_texture != null:
 			ocean_material.set_shader_parameter("foam_map_far", foam_sub_far.foam_texture)
 			ocean_material.set_shader_parameter("foam_coverage_far", foam_sub_far.capture_coverage)
@@ -73,10 +79,13 @@ func update_depth_cameras(center: Vector2) -> void:
 	top_mesh.size = Vector2.ONE * foam_sub_far.capture_coverage
 	bottom_mesh.size = top_mesh.size
 
+	# foam_top_depth.render_target_update_mode = SubViewport.CLEAR_MODE_NEVER
+	# foam_bottom_depth.render_target_update_mode = SubViewport.CLEAR_MODE_NEVER
+
 func get_camera() -> Camera3D:
 	var camera: Camera3D
 	if Engine.is_editor_hint():
-		camera = EditorInterface.get_editor_viewport_3d(0).get_camera_3d()
+		camera = Engine.get_singleton(&"EditorInterface").get_editor_viewport_3d(0).get_camera_3d()
 	else:
 		camera = get_viewport().get_camera_3d()
 
@@ -87,7 +96,26 @@ func calc_capture_center() -> Vector2:
 	if !is_instance_valid(camera):
 		return Vector2.ZERO
 
+	var meters_per_texel := float(foam_sub_near.capture_coverage) / foam_sub_near.foam_resolution.x
+	var intervals_in_meter := floori(1/meters_per_texel)
+	var snap_dist = meters_per_texel * intervals_in_meter
+	if is_nan(snap_dist):
+		return Vector2.ZERO
+		
 	var camera_xz := Vector2(camera.global_position.x, camera.global_position.z)
-	var capture_center = camera_xz.snapped(Vector2.ONE)
+	var capture_center = camera_xz.snapped(Vector2.ONE * snap_dist)
+
 
 	return capture_center
+
+func update_patches_center():
+	var camera := get_camera()
+	if !is_instance_valid(camera):
+		return 
+
+	var camera_xz := Vector2(camera.global_position.x, camera.global_position.z)
+	var snap_distance := 40.0/4
+	
+	var snapped_xz = camera_xz.snapped(Vector2.ONE * snap_distance)
+	tiles.global_position.x = snapped_xz.x
+	tiles.global_position.z = snapped_xz.y
