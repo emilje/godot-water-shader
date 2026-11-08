@@ -37,7 +37,7 @@ uniform float smoothstep_high: hint_range(0,1) = 0.75;
 uniform float amplitude_effect:hint_range(0, 1) = 0.7;
 
 group_uniforms Warp;
-uniform float warp_uv_x = 700.0;
+uniform float warp_uv_x = 40.0;
 uniform float warp_uv_y = 500.0;
 uniform float warp_speed:hint_range(0, 0.01) = 0.005;
 uniform vec2 warp_strength = vec2(15.0,10.0);
@@ -91,7 +91,7 @@ vec3 wave(vec2 pos, int noise_samples) {
 	return displacement;
 }
 
-// Maybe not worth the hassle to keep derivatives?
+// Maybe not worth the hassle to keep derivatives? Performance is better tho... 
 //void gerstner_normal(vec2 pos, float angle, float amplitude, float frequency, float speed, float steepness,
 //inout vec3 tangent_x, inout vec3 tangent_z, bool sample_noise) {
 	//angle=radians(angle);
@@ -172,17 +172,16 @@ void vertex() {
 }
 
 void fragment() {
-	// Analytical normals?
+	// Analytical normals? Performance is better, but more complex to setup. :'(
 	//vec3 w_normal = wave_normal(world_xz);
 	//NORMAL = normalize((VIEW_MATRIX * vec4(w_normal, 0.0)).xyz);
 	
 	// Neighbor sampling normals
-	int noise_samples = max(int((1.0 - smoothstep(0, 20, camera_dist)) * 5.0), 1);
 	vec2 pos_x = world_xz + vec2(sampling_distance, 0.0);
 	vec2 pos_z = world_xz + vec2(0.0, sampling_distance);
-	vec3 wave_current = vec3(world_xz.x, 0.0, world_xz.y) + wave(world_xz,5);
-	vec3 tangent_x = vec3(pos_x.x, 0.0, pos_x.y) + wave(pos_x, 5) - wave_current;
-	vec3 tangent_z = vec3(pos_z.x, 0.0, pos_z.y) + wave(pos_z, 5) - wave_current;
+	vec3 wave_current = vec3(world_xz.x, 0.0, world_xz.y) + wave(world_xz,3);
+	vec3 tangent_x = vec3(pos_x.x, 0.0, pos_x.y) + wave(pos_x, 3) - wave_current;
+	vec3 tangent_z = vec3(pos_z.x, 0.0, pos_z.y) + wave(pos_z, 3) - wave_current;
 	vec3 wave_normal = cross(tangent_z, tangent_x);
 	NORMAL = normalize((VIEW_MATRIX * vec4(wave_normal, 0.0)).xyz);
 	
@@ -255,7 +254,7 @@ void fragment() {
 	
 	ALBEDO = mixed_color;
 	EMISSION = mix(EMISSION, horizon_color, horizon_fade);
-	//RIM = mix(3,0, rim_fade);
+	RIM = mix(3,0, rim_fade);
 	ROUGHNESS = 0.01;
 	SPECULAR = mix(SPECULAR, 0.0, horizon_fade);
 }

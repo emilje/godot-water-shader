@@ -6,7 +6,6 @@
 [ext_resource type="Texture2D" uid="uid://dxg8sejji6v6u" path="res://textures/sea_foam.png" id="4_r51aw"]
 [ext_resource type="Texture2D" uid="uid://cx2vyxybady15" path="res://textures/ocean_pattern_randomizer.tres" id="5_6hq54"]
 [ext_resource type="Shader" uid="uid://b7k3nda2gn1hi" path="res://shaders/i_depth.gdshader" id="5_66s0d"]
-[ext_resource type="Script" uid="uid://ub3wgpd1c0wl" path="res://scenes/culling.gd" id="5_ghv7c"]
 [ext_resource type="ArrayMesh" uid="uid://ocslw4c8u3sd" path="res://tiles/Tile_64.res" id="6_rrkgo"]
 [ext_resource type="Script" uid="uid://b0prs7mx7bl3m" path="res://scripts/foam_sub_viewport.gd" id="6_wt1e5"]
 [ext_resource type="ArrayMesh" uid="uid://1or1ipdfagrn" path="res://tiles/Tile_32.res" id="7_52dmv"]
@@ -16,9 +15,7 @@
 [ext_resource type="ArrayMesh" uid="uid://bdpjsik03nvfb" path="res://tiles/Tile_8.res" id="9_214ks"]
 [ext_resource type="FastNoiseLite" uid="uid://qaky5q410weu" path="res://textures/erosion_noise.tres" id="9_i4kjf"]
 [ext_resource type="Script" uid="uid://bptouotm6lor2" path="res://scripts/fps_label.gd" id="10_ale01"]
-[ext_resource type="PackedScene" uid="uid://dy4qj0lyb6h67" path="res://ship/dutch_ship_medium.glb" id="18_214ks"]
-[ext_resource type="Script" uid="uid://2o3vve81g37h" path="res://scenes/flat_point.gd" id="21_l576r"]
-[ext_resource type="PackedScene" uid="uid://cpwqdagtw6klh" path="res://island/island.glb" id="22_gx7w3"]
+[ext_resource type="Script" uid="uid://2o3vve81g37h" path="res://scripts/flat_point.gd" id="21_l576r"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_x3lc3"]
 sky_top_color = Color(4.428029e-06, 0.6596751, 0.9885648, 1)
@@ -33,15 +30,15 @@ sky_material = SubResource("ProceduralSkyMaterial_x3lc3")
 background_mode = 2
 sky = SubResource("Sky_o5nso")
 
-[sub_resource type="PlaneMesh" id="PlaneMesh_ale01"]
-size = Vector2(10, 10)
-subdivide_width = 256
-subdivide_depth = 256
+[sub_resource type="PlaneMesh" id="PlaneMesh_wt1e5"]
+size = Vector2(40, 40)
+subdivide_width = 127
+subdivide_depth = 127
 
-[sub_resource type="ViewportTexture" id="ViewportTexture_6hq54"]
+[sub_resource type="ViewportTexture" id="ViewportTexture_52dmv"]
 viewport_path = NodePath("HistoryAFar")
 
-[sub_resource type="ViewportTexture" id="ViewportTexture_l576r"]
+[sub_resource type="ViewportTexture" id="ViewportTexture_i4kjf"]
 viewport_path = NodePath("HistoryA")
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_mvh63"]
@@ -66,15 +63,15 @@ shader = ExtResource("2_ale01")
 shader_parameter/color = Color(0, 0.2897671, 0.31803012, 1)
 shader_parameter/crest_color = Color(0, 0.33110005, 0.25894862, 1)
 shader_parameter/sampling_distance = 0.01
-shader_parameter/foam_map_near = SubResource("ViewportTexture_l576r")
-shader_parameter/foam_map_far = SubResource("ViewportTexture_6hq54")
+shader_parameter/foam_map_near = SubResource("ViewportTexture_i4kjf")
+shader_parameter/foam_map_far = SubResource("ViewportTexture_52dmv")
 shader_parameter/absorption_strength = 1.25
 shader_parameter/color_absorption = Vector3(1.3, 0.4, 0.6)
 shader_parameter/i_noise_texture = SubResource("NoiseTexture2D_xb4w7")
 shader_parameter/noise = SubResource("NoiseTexture2D_mvh63")
 shader_parameter/noise_intensity = 0.05
 shader_parameter/noise_normal_texture = SubResource("NoiseTexture2D_wt1e5")
-shader_parameter/foam_center = Vector2(93.75, -49.804688)
+shader_parameter/foam_center = Vector2(70.3125, -42.96875)
 shader_parameter/foam_coverage = 0.0
 shader_parameter/foam_coverage_far = 0.0
 shader_parameter/sea_foam = ExtResource("4_r51aw")
@@ -90,11 +87,6 @@ shader_parameter/warp_uv_x = 40.0
 shader_parameter/warp_uv_y = 500.0
 shader_parameter/warp_speed = 0.002000000095
 shader_parameter/warp_strength = Vector2(4, 20)
-
-[sub_resource type="PlaneMesh" id="PlaneMesh_wt1e5"]
-size = Vector2(40, 40)
-subdivide_width = 127
-subdivide_depth = 127
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_i4kjf"]
 size = Vector2(40, 40)
@@ -124,7 +116,7 @@ subdivide_depth = 63
 [sub_resource type="Environment" id="Environment_be3v4"]
 
 [sub_resource type="QuadMesh" id="QuadMesh_l5no5"]
-size = Vector2(200, 200)
+size = Vector2(150, 150)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_5me7w"]
 render_priority = 0
@@ -145,22 +137,21 @@ seamless = true
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_udkvx"]
 resource_local_to_scene = true
 shader = ExtResource("7_rrkgo")
-shader_parameter/sea_foam = ExtResource("4_r51aw")
 shader_parameter/noise = SubResource("NoiseTexture2D_4s5vi")
 shader_parameter/depth_top = SubResource("ViewportTexture_xb4w7")
 shader_parameter/depth_bottom = SubResource("ViewportTexture_mvh63")
-shader_parameter/foam_resolution = Vector2(2048, 2048)
+shader_parameter/foam_resolution = Vector2(1024, 1024)
 shader_parameter/noise_intensity_x = 0.06000000517907
 shader_parameter/noise_intensity_z = -0.06000000052093002
-shader_parameter/capture_center = Vector2(93.75, -49.804688)
+shader_parameter/capture_center = Vector2(70.3125, -42.96875)
 shader_parameter/capture_coverage = 0.0
-shader_parameter/depth_coverage = 200.0
+shader_parameter/depth_coverage = 150.0
 shader_parameter/world_disp_noise = ExtResource("5_6hq54")
 shader_parameter/disp_noise_uv = 409.330019443175
 shader_parameter/smoothstep_low = 0.2000000095
 shader_parameter/smoothstep_high = 1.0
 shader_parameter/amplitude_effect = 0.800000038
-shader_parameter/warp_uv_x = 25.0
+shader_parameter/warp_uv_x = 40.0
 shader_parameter/warp_uv_y = 500.0
 shader_parameter/warp_speed = 0.002000000095
 shader_parameter/warp_strength = Vector2(4, 20)
@@ -175,154 +166,92 @@ seamless = true
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_bdn0s"]
 resource_local_to_scene = true
 shader = ExtResource("7_rrkgo")
-shader_parameter/sea_foam = ExtResource("4_r51aw")
 shader_parameter/noise = SubResource("NoiseTexture2D_vvno1")
 shader_parameter/depth_top = SubResource("ViewportTexture_xb4w7")
 shader_parameter/depth_bottom = SubResource("ViewportTexture_mvh63")
-shader_parameter/foam_resolution = Vector2(2048, 2048)
+shader_parameter/foam_resolution = Vector2(1024, 1024)
 shader_parameter/noise_intensity_x = 0.06000000517907
 shader_parameter/noise_intensity_z = -0.06000000052093002
-shader_parameter/capture_center = Vector2(93.75, -49.804688)
+shader_parameter/capture_center = Vector2(70.3125, -42.96875)
 shader_parameter/capture_coverage = 0.0
-shader_parameter/depth_coverage = 200.0
+shader_parameter/depth_coverage = 150.0
 shader_parameter/world_disp_noise = ExtResource("5_6hq54")
 shader_parameter/disp_noise_uv = 409.330019443175
 shader_parameter/smoothstep_low = 0.2000000095
 shader_parameter/smoothstep_high = 1.0
 shader_parameter/amplitude_effect = 0.800000038
-shader_parameter/warp_uv_x = 25.0
+shader_parameter/warp_uv_x = 40.0
 shader_parameter/warp_uv_y = 500.0
 shader_parameter/warp_speed = 0.002000000095
 shader_parameter/warp_strength = Vector2(4, 20)
 
-[sub_resource type="ViewportTexture" id="ViewportTexture_gx7w3"]
+[sub_resource type="ViewportTexture" id="ViewportTexture_214ks"]
 viewport_path = NodePath("FoamSubViewport")
 
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_d0eyj"]
 noise = ExtResource("9_i4kjf")
 seamless = true
 
-[sub_resource type="ViewportTexture" id="ViewportTexture_gc8vg"]
+[sub_resource type="ViewportTexture" id="ViewportTexture_snmfh"]
 viewport_path = NodePath("HistoryB")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_th7s7"]
 resource_local_to_scene = true
 shader = ExtResource("8_52dmv")
-shader_parameter/current_foam = SubResource("ViewportTexture_gx7w3")
-shader_parameter/history_foam = SubResource("ViewportTexture_gc8vg")
-shader_parameter/delta = 0.019349111111111077
+shader_parameter/current_foam = SubResource("ViewportTexture_214ks")
+shader_parameter/history_foam = SubResource("ViewportTexture_snmfh")
+shader_parameter/delta = 0.02666666666666667
 shader_parameter/foam_history_offset = Vector2(0, 0)
 shader_parameter/decay_rate = 0.2
 shader_parameter/erosion_multiplier = 3.0
 shader_parameter/erosion_noise = SubResource("NoiseTexture2D_d0eyj")
-shader_parameter/capture_center = Vector2(93.75, -49.804688)
+shader_parameter/capture_center = Vector2(70.3125, -42.96875)
 shader_parameter/capture_coverage = 0.0
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_pbenk"]
 resource_local_to_scene = true
 shader = ExtResource("8_52dmv")
-shader_parameter/current_foam = SubResource("ViewportTexture_gx7w3")
-shader_parameter/history_foam = SubResource("ViewportTexture_l576r")
-shader_parameter/delta = 0.020833333333333336
+shader_parameter/current_foam = SubResource("ViewportTexture_214ks")
+shader_parameter/history_foam = SubResource("ViewportTexture_i4kjf")
+shader_parameter/delta = 0.026944444444444448
 shader_parameter/foam_history_offset = Vector2(0, 0)
 shader_parameter/decay_rate = 0.2
 shader_parameter/erosion_multiplier = 3.0
 shader_parameter/erosion_noise = SubResource("NoiseTexture2D_d0eyj")
-shader_parameter/capture_center = Vector2(93.75, -49.804688)
+shader_parameter/capture_center = Vector2(70.3125, -42.96875)
 shader_parameter/capture_coverage = 0.0
 
-[sub_resource type="ViewportTexture" id="ViewportTexture_o5nso"]
+[sub_resource type="ViewportTexture" id="ViewportTexture_6hq54"]
 viewport_path = NodePath("FoamSubViewportFar")
 
-[sub_resource type="ViewportTexture" id="ViewportTexture_x3lc3"]
+[sub_resource type="ViewportTexture" id="ViewportTexture_l576r"]
 viewport_path = NodePath("HistoryBFar")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_xb4w7"]
 resource_local_to_scene = true
 shader = ExtResource("8_52dmv")
-shader_parameter/current_foam = SubResource("ViewportTexture_o5nso")
-shader_parameter/history_foam = SubResource("ViewportTexture_x3lc3")
-shader_parameter/delta = 0.019349111111111077
+shader_parameter/current_foam = SubResource("ViewportTexture_6hq54")
+shader_parameter/history_foam = SubResource("ViewportTexture_l576r")
+shader_parameter/delta = 0.02666666666666667
 shader_parameter/foam_history_offset = Vector2(0, 0)
 shader_parameter/decay_rate = 0.2
 shader_parameter/erosion_multiplier = 3.0
 shader_parameter/erosion_noise = SubResource("NoiseTexture2D_d0eyj")
-shader_parameter/capture_center = Vector2(93.75, -49.804688)
+shader_parameter/capture_center = Vector2(70.3125, -42.96875)
 shader_parameter/capture_coverage = 0.0
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_u5eeg"]
 resource_local_to_scene = true
 shader = ExtResource("8_52dmv")
-shader_parameter/current_foam = SubResource("ViewportTexture_o5nso")
-shader_parameter/history_foam = SubResource("ViewportTexture_6hq54")
-shader_parameter/delta = 0.020833333333333336
+shader_parameter/current_foam = SubResource("ViewportTexture_6hq54")
+shader_parameter/history_foam = SubResource("ViewportTexture_52dmv")
+shader_parameter/delta = 0.026944444444444448
 shader_parameter/foam_history_offset = Vector2(0, 0)
 shader_parameter/decay_rate = 0.2
 shader_parameter/erosion_multiplier = 3.0
 shader_parameter/erosion_noise = SubResource("NoiseTexture2D_d0eyj")
-shader_parameter/capture_center = Vector2(93.75, -49.804688)
+shader_parameter/capture_center = Vector2(70.3125, -42.96875)
 shader_parameter/capture_coverage = 0.0
-
-[sub_resource type="Animation" id="Animation_gc8vg"]
-length = 24.0
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:position")
-tracks/0/interp = 2
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 6.1, 10.633333, 14.333333, 18.81474, 20),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
-"update": 0,
-"values": [Vector3(94.095505, 3.2619677, -33.599426), Vector3(96.32507, 3.2421784, -27.683455), Vector3(98.84429, 4.6205635, -24.221296), Vector3(98.84429, 4.6205635, -24.221296), Vector3(96.6026, 11.026858, -29.464802), Vector3(96.2189, 11.198153, -30.06209)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath(".:quaternion")
-tracks/1/interp = 2
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0, 6.11, 10.066667, 13.766666, 17.266666, 20.333332, 23.704636),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1),
-"update": 0,
-"values": [Quaternion(-0.00057097373, 0.9989626, -0.013077143, -0.04361667), Quaternion(-0.00412905, 0.9914741, 0.032457497, 0.12612943), Quaternion(0.0037079828, 0.9962539, 0.05657141, -0.06529964), Quaternion(0.0037079828, 0.9962539, 0.05657141, -0.06529964), Quaternion(0.26973695, 0.21846278, -0.06297634, 0.9357083), Quaternion(-0.011115639, 0.98182064, 0.060812775, 0.17946169), Quaternion(0.011974833, 0.98794806, 0.1151554, -0.10273519)]
-}
-
-[sub_resource type="Animation" id="Animation_o5nso"]
-resource_name = "new_animation"
-length = 4.0
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:position")
-tracks/0/interp = 2
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 4),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Vector3(91.76638, 7.112194, -61.425285), Vector3(-16.43014, 7.6388593, -41.270657)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath(".:rotation")
-tracks/1/interp = 2
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0, 4),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Vector3(-0.10908315, 1.8893169, 0), Vector3(-0.013090052, 1.924221, 0)]
-}
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_x3lc3"]
-_data = {
-&"RESET": SubResource("Animation_gc8vg"),
-&"new_animation": SubResource("Animation_o5nso")
-}
 
 [sub_resource type="SphereMesh" id="SphereMesh_l5no5"]
 radius = 1.0
@@ -331,30 +260,9 @@ height = 2.0
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_mvh63"]
 resource_local_to_scene = true
 
-[sub_resource type="ViewportTexture" id="ViewportTexture_h18h7"]
-viewport_path = NodePath("SubViewportCull")
-
-[sub_resource type="GDScript" id="GDScript_gx7w3"]
-script/source = "# @tool
-extends Node3D
-
-var starting_rotation: float = 0.0
-
-
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	pass # Replace with function body.
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	var time := Time.get_ticks_msec() / 1000.0
-	# rotation.x = sin(time) * deg_to_rad(5.0)
-	
-"
-
-[node name="Node3D" type="Node3D" unique_id=1630013092]
+[node name="Node3D" type="Node3D" unique_id=1630013092 node_paths=PackedStringArray("tiles")]
 script = ExtResource("1_383tx")
+tiles = NodePath("Tiles")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=263551322]
 transform = Transform3D(1.1924881e-08, 0.70710677, -0.70710677, 0, 0.70710677, 0.70710677, 1, -8.432164e-09, 8.432164e-09, 0, 0, 0)
@@ -364,27 +272,8 @@ shadow_enabled = true
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=17822797]
 environment = SubResource("Environment_jfska")
 
-[node name="Ocean" type="MeshInstance3D" parent="." unique_id=1697619316]
-visible = false
-cast_shadow = 0
-gi_mode = 0
-mesh = SubResource("PlaneMesh_ale01")
-surface_material_override/0 = SubResource("ShaderMaterial_rfhwr")
-
-[node name="SubViewportCull" type="SubViewport" parent="." unique_id=356720992 node_paths=PackedStringArray("patches_node", "camera")]
-render_target_update_mode = 0
-script = ExtResource("5_ghv7c")
-patches_node = NodePath("../Tiles")
-camera = NodePath("../Camera3D")
-
-[node name="Camera3D" type="Camera3D" parent="SubViewportCull" unique_id=1766598756]
-transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 100, 0)
-cull_mask = 16
-projection = 1
-size = 1500.0
-
 [node name="Tiles" type="Node3D" parent="." unique_id=1199750735]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 100, 0, -50)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 70, 0, -40)
 
 [node name="Center_128" type="MeshInstance3D" parent="Tiles" unique_id=1198671015]
 cast_shadow = 0
@@ -893,15 +782,15 @@ surface_material_override/0 = SubResource("ShaderMaterial_rfhwr")
 [node name="TopDepth" type="SubViewport" parent="." unique_id=1237803608]
 use_hdr_2d = true
 size = Vector2i(256, 256)
-render_target_update_mode = 1
+render_target_update_mode = 0
 
 [node name="Camera3D" type="Camera3D" parent="TopDepth" unique_id=1324256695]
-transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 93.75, 10, -49.804688)
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 70.3125, 10, -42.96875)
 visible = false
 cull_mask = 2
 environment = SubResource("Environment_be3v4")
 projection = 1
-size = 200.0
+size = 150.0
 far = 20.0
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="TopDepth/Camera3D" unique_id=642027414]
@@ -914,15 +803,15 @@ surface_material_override/0 = SubResource("ShaderMaterial_5me7w")
 [node name="BottomDepth" type="SubViewport" parent="." unique_id=1035603757]
 use_hdr_2d = true
 size = Vector2i(256, 256)
-render_target_update_mode = 1
+render_target_update_mode = 0
 
 [node name="Camera3D" type="Camera3D" parent="BottomDepth" unique_id=1586773813]
-transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 93.75, -10, -49.804688)
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 70.3125, -10, -42.96875)
 visible = false
 cull_mask = 2
 environment = SubResource("Environment_jue3d")
 projection = 1
-size = 200.0
+size = 150.0
 far = 20.0
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="BottomDepth/Camera3D" unique_id=803076881]
@@ -933,12 +822,13 @@ mesh = SubResource("QuadMesh_l5no5")
 surface_material_override/0 = SubResource("ShaderMaterial_5me7w")
 
 [node name="FoamSubViewport" type="SubViewport" parent="." unique_id=1766237538 node_paths=PackedStringArray("history_a", "history_b")]
-size = Vector2i(2048, 2048)
+size = Vector2i(1024, 1024)
 render_target_update_mode = 1
 script = ExtResource("6_wt1e5")
-capture_coverage = 50
+capture_coverage = 25
 history_a = NodePath("../HistoryA")
 history_b = NodePath("../HistoryB")
+update_hz = 40.0
 
 [node name="ColorRect" type="ColorRect" parent="FoamSubViewport" unique_id=1064412325]
 material = SubResource("ShaderMaterial_udkvx")
@@ -949,12 +839,13 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="FoamSubViewportFar" type="SubViewport" parent="." unique_id=476190678 node_paths=PackedStringArray("history_a", "history_b")]
-size = Vector2i(2048, 2048)
+size = Vector2i(1024, 1024)
 render_target_update_mode = 1
 script = ExtResource("6_wt1e5")
-capture_coverage = 200
+capture_coverage = 150
 history_a = NodePath("../HistoryAFar")
 history_b = NodePath("../HistoryBFar")
+update_hz = 40.0
 
 [node name="ColorRect" type="ColorRect" parent="FoamSubViewportFar" unique_id=959198359]
 material = SubResource("ShaderMaterial_bdn0s")
@@ -966,7 +857,7 @@ grow_vertical = 2
 
 [node name="HistoryA" type="SubViewport" parent="." unique_id=1720288705]
 use_hdr_2d = true
-size = Vector2i(2048, 2048)
+size = Vector2i(1024, 1024)
 render_target_update_mode = 1
 
 [node name="ColorRect" type="ColorRect" parent="HistoryA" unique_id=24823323]
@@ -979,7 +870,7 @@ grow_vertical = 2
 
 [node name="HistoryB" type="SubViewport" parent="." unique_id=401819047]
 use_hdr_2d = true
-size = Vector2i(2048, 2048)
+size = Vector2i(1024, 1024)
 render_target_update_mode = 0
 
 [node name="ColorRect" type="ColorRect" parent="HistoryB" unique_id=918274233]
@@ -992,7 +883,7 @@ grow_vertical = 2
 
 [node name="HistoryAFar" type="SubViewport" parent="." unique_id=1830392608]
 use_hdr_2d = true
-size = Vector2i(2048, 2048)
+size = Vector2i(1024, 1024)
 render_target_update_mode = 1
 
 [node name="ColorRect" type="ColorRect" parent="HistoryAFar" unique_id=1919929244]
@@ -1005,7 +896,7 @@ grow_vertical = 2
 
 [node name="HistoryBFar" type="SubViewport" parent="." unique_id=170918349]
 use_hdr_2d = true
-size = Vector2i(2048, 2048)
+size = Vector2i(1024, 1024)
 render_target_update_mode = 0
 
 [node name="ColorRect" type="ColorRect" parent="HistoryBFar" unique_id=1260043528]
@@ -1017,11 +908,10 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=1028437860]
-transform = Transform3D(-0.99619603, -0.0022815266, -0.087128006, 2.3283095e-10, 0.99965733, -0.026176995, 0.0871579, -0.026077356, -0.99585426, 94.095505, 3.2619677, -33.599426)
+transform = Transform3D(-0.90631056, -0.14107095, 0.39837185, 0, 0.94264144, 0.33380702, -0.42261228, 0.30253282, -0.8543259, 70.03255, 8.413479, -43.092113)
 rotation_edit_mode = 1
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Camera3D" unique_id=741138545]
-libraries/ = SubResource("AnimationLibrary_x3lc3")
 movie_quit_on_finish = true
 
 [node name="Sphere" type="MeshInstance3D" parent="." unique_id=547641031]
@@ -1040,22 +930,5 @@ theme_override_font_sizes/font_size = 32
 text = "xxx"
 script = ExtResource("10_ale01")
 
-[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=595863171]
-visible = false
-
-[node name="TextureRect" type="TextureRect" parent="CanvasLayer" unique_id=1515063913]
-offset_right = 402.0
-offset_bottom = 371.0
-texture = SubResource("ViewportTexture_h18h7")
-expand_mode = 1
-stretch_mode = 4
-
-[node name="Ship" parent="." unique_id=1999199678 instance=ExtResource("18_214ks")]
-transform = Transform3D(0.88580513, -0.0064068567, 0.4640132, 1.648346e-10, 0.9999046, 0.013806172, -0.46405733, -0.012229579, 0.88572073, 96.71122, 0, -29.692719)
-script = SubResource("GDScript_gx7w3")
-
 [node name="FlatPoint" type="Marker3D" parent="." unique_id=2000339815]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.2604961, 0)
 script = ExtResource("21_l576r")
-
-[node name="island" parent="FlatPoint" unique_id=1886757478 instance=ExtResource("22_gx7w3")]

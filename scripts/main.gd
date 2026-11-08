@@ -2,8 +2,6 @@
 extends Node3D
 @export var tiles: Node3D
 
-@onready var ocean: MeshInstance3D = $Ocean
-
 @onready var foam_sub_near: FoamSubviewport = $FoamSubViewport
 @onready var foam_sub_far: FoamSubviewport = $FoamSubViewportFar
 @onready var foam_top_depth = $TopDepth
@@ -12,7 +10,7 @@ extends Node3D
 @onready var top_depth_camera: Camera3D = $TopDepth/Camera3D
 @onready var bottom_depth_camera: Camera3D = $BottomDepth/Camera3D
 
-@onready var ocean_material: ShaderMaterial = $Ocean.get_surface_override_material(0)
+@onready var ocean_material: ShaderMaterial = $Tiles/Center_128.get_surface_override_material(0)
 
 @export var near_foam: bool = true:
 	set(value):
@@ -78,9 +76,6 @@ func update_depth_cameras(center: Vector2) -> void:
 	var bottom_mesh: QuadMesh = bottom_depth_camera.get_node("MeshInstance3D").mesh
 	top_mesh.size = Vector2.ONE * foam_sub_far.capture_coverage
 	bottom_mesh.size = top_mesh.size
-
-	# foam_top_depth.render_target_update_mode = SubViewport.CLEAR_MODE_NEVER
-	# foam_bottom_depth.render_target_update_mode = SubViewport.CLEAR_MODE_NEVER
 
 func get_camera() -> Camera3D:
 	var camera: Camera3D

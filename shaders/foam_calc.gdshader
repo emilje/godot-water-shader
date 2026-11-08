@@ -1,5 +1,4 @@
 shader_type canvas_item;
-uniform sampler2D sea_foam: repeat_enable;
 uniform sampler2D noise: repeat_enable;
 uniform sampler2D depth_top: repeat_disable;
 uniform sampler2D depth_bottom: repeat_disable;
@@ -19,7 +18,7 @@ uniform float smoothstep_high: hint_range(0,1) = 0.75;
 uniform float amplitude_effect:hint_range(0, 1) = 0.7;
 
 group_uniforms Warp;
-uniform float warp_uv_x = 700.0;
+uniform float warp_uv_x = 40.0;
 uniform float warp_uv_y = 500.0;
 uniform float warp_speed:hint_range(0, 0.01) = 0.005;
 uniform vec2 warp_strength = vec2(15.0,10.0);
@@ -58,15 +57,15 @@ vec3 gerstner(vec2 pos, float angle, float amplitude, float wavelength, float sp
 
 vec3 wave(vec2 pos) {
 		vec3 displacement = gerstner(pos, 0.0, 4.3, 120, 5, 0.8);
-		displacement += gerstner(pos, 7.0, 4.1, 80, 8, 0.6);
+		displacement += gerstner(pos, -10.0, 4.1, 80, 8, 0.6);
 		displacement += gerstner(pos, 15, 0.8, 20, 3, 0.8);
-		displacement += gerstner(pos, -45, 0.4, 13, 5, 0.2);
+		displacement += gerstner(pos, -45, 0.3, 13, 5, 0.2);
 		
-		//float flat_point_distance = distance(pos, flat_point);
-		//if(flat_point_distance < 100.0) {
-			//float inten =  smoothstep(5,100, flat_point_distance);
-			//displacement *= inten;
-		//}
+		float flat_point_distance = distance(pos, flat_point);
+		if(flat_point_distance < 100.0) {
+			float inten =  smoothstep(5,100, flat_point_distance);
+			displacement *= inten;
+		}
 	
 	return displacement;
 }
