@@ -27,6 +27,7 @@ uniform vec3 horizon_color: source_color;
 varying float h_dist;
 uniform bool far_foam_enabled = true;
 uniform bool near_foam_enabled = true;
+uniform bool depth_foam_enabled = true;
 global uniform vec2 flat_point;
 
 group_uniforms Pattern;
@@ -195,10 +196,12 @@ void fragment() {
 	float foam_old = texture(sea_foam, world_uv * 12.0).r;
 
 	//Near foam
-	vec2 foam_near_mixed = create_mixed_foam(foam_old, foam_fresh, vec2(foam_near.r, foam_near.g));
+	float near_g = depth_foam_enabled ? foam_near.g : 0.0;
+	vec2 foam_near_mixed = create_mixed_foam(foam_old, foam_fresh, vec2(foam_near.r, near_g));
 	
 	// Far foam
-	vec2 foam_far_mixed = create_mixed_foam(foam_old, foam_fresh, vec2(foam_far.r, foam_far.g));
+	float far_g = depth_foam_enabled ? foam_far.g : 0.0;
+	vec2 foam_far_mixed = create_mixed_foam(foam_old, foam_fresh, vec2(foam_far.r, far_g));
 	
 	// Foam edge fading
 	float near_radius = foam_coverage * 0.5;

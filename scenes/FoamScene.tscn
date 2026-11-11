@@ -40,10 +40,10 @@ size = Vector2(40, 40)
 subdivide_width = 127
 subdivide_depth = 127
 
-[sub_resource type="ViewportTexture" id="ViewportTexture_52dmv"]
+[sub_resource type="ViewportTexture" id="ViewportTexture_l576r"]
 viewport_path = NodePath("HistoryBFar")
 
-[sub_resource type="ViewportTexture" id="ViewportTexture_i4kjf"]
+[sub_resource type="ViewportTexture" id="ViewportTexture_snmfh"]
 viewport_path = NodePath("HistoryB")
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_mvh63"]
@@ -68,21 +68,22 @@ shader = ExtResource("2_ale01")
 shader_parameter/color = Color(0, 0.2897671, 0.31803012, 1)
 shader_parameter/crest_color = Color(0, 0.33110005, 0.25894862, 1)
 shader_parameter/sampling_distance = 0.01
-shader_parameter/foam_map_near = SubResource("ViewportTexture_i4kjf")
-shader_parameter/foam_map_far = SubResource("ViewportTexture_52dmv")
+shader_parameter/foam_map_near = SubResource("ViewportTexture_snmfh")
+shader_parameter/foam_map_far = SubResource("ViewportTexture_l576r")
 shader_parameter/absorption_strength = 1.25
 shader_parameter/color_absorption = Vector3(1.3, 0.4, 0.6)
 shader_parameter/i_noise_texture = SubResource("NoiseTexture2D_xb4w7")
 shader_parameter/noise = SubResource("NoiseTexture2D_mvh63")
 shader_parameter/noise_intensity = 0.05
 shader_parameter/noise_normal_texture = SubResource("NoiseTexture2D_wt1e5")
-shader_parameter/foam_center = Vector2(71.28906, -33.203125)
+shader_parameter/foam_center = Vector2(-96.67969, 17.578125)
 shader_parameter/foam_coverage = 0.0
 shader_parameter/foam_coverage_far = 0.0
 shader_parameter/sea_foam = ExtResource("4_r51aw")
 shader_parameter/horizon_color = Color(0.63769805, 0.8146722, 0.88574517, 1)
 shader_parameter/far_foam_enabled = true
 shader_parameter/near_foam_enabled = true
+shader_parameter/depth_foam_enabled = true
 shader_parameter/world_disp_noise = ExtResource("5_6hq54")
 shader_parameter/disp_noise_uv = 409.330019443175
 shader_parameter/smoothstep_low = 0.2000000095
@@ -148,7 +149,7 @@ shader_parameter/depth_bottom = SubResource("ViewportTexture_mvh63")
 shader_parameter/foam_resolution = Vector2(1024, 1024)
 shader_parameter/noise_intensity_x = 0.06000000517907
 shader_parameter/noise_intensity_z = -0.06000000052093002
-shader_parameter/capture_center = Vector2(71.28906, -33.203125)
+shader_parameter/capture_center = Vector2(-96.67969, 17.578125)
 shader_parameter/capture_coverage = 0.0
 shader_parameter/depth_coverage = 150.0
 shader_parameter/world_disp_noise = ExtResource("5_6hq54")
@@ -177,7 +178,7 @@ shader_parameter/depth_bottom = SubResource("ViewportTexture_mvh63")
 shader_parameter/foam_resolution = Vector2(1024, 1024)
 shader_parameter/noise_intensity_x = 0.06000000517907
 shader_parameter/noise_intensity_z = -0.06000000052093002
-shader_parameter/capture_center = Vector2(71.28906, -33.203125)
+shader_parameter/capture_center = Vector2(-96.67969, 17.578125)
 shader_parameter/capture_coverage = 0.0
 shader_parameter/depth_coverage = 150.0
 shader_parameter/world_disp_noise = ExtResource("5_6hq54")
@@ -201,29 +202,29 @@ seamless = true
 resource_local_to_scene = true
 shader = ExtResource("8_52dmv")
 shader_parameter/current_foam = SubResource("ViewportTexture_214ks")
-shader_parameter/history_foam = SubResource("ViewportTexture_i4kjf")
-shader_parameter/delta = 0.0275
+shader_parameter/history_foam = SubResource("ViewportTexture_snmfh")
+shader_parameter/delta = 0.02777777777777778
 shader_parameter/foam_history_offset = Vector2(0, 0)
 shader_parameter/decay_rate = 0.2
 shader_parameter/erosion_multiplier = 3.0
 shader_parameter/erosion_noise = SubResource("NoiseTexture2D_d0eyj")
-shader_parameter/capture_center = Vector2(71.28906, -33.203125)
+shader_parameter/capture_center = Vector2(-96.67969, 17.578125)
 shader_parameter/capture_coverage = 0.0
 
-[sub_resource type="ViewportTexture" id="ViewportTexture_snmfh"]
+[sub_resource type="ViewportTexture" id="ViewportTexture_i4kjf"]
 viewport_path = NodePath("HistoryA")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_pbenk"]
 resource_local_to_scene = true
 shader = ExtResource("8_52dmv")
 shader_parameter/current_foam = SubResource("ViewportTexture_214ks")
-shader_parameter/history_foam = SubResource("ViewportTexture_snmfh")
-shader_parameter/delta = 0.029089777777777777
+shader_parameter/history_foam = SubResource("ViewportTexture_i4kjf")
+shader_parameter/delta = 0.02777777777777778
 shader_parameter/foam_history_offset = Vector2(0, 0)
 shader_parameter/decay_rate = 0.2
 shader_parameter/erosion_multiplier = 3.0
 shader_parameter/erosion_noise = SubResource("NoiseTexture2D_d0eyj")
-shader_parameter/capture_center = Vector2(71.28906, -33.203125)
+shader_parameter/capture_center = Vector2(-96.67969, 17.578125)
 shader_parameter/capture_coverage = 0.0
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_6hq54"]
@@ -233,34 +234,34 @@ viewport_path = NodePath("FoamSubViewportFar")
 resource_local_to_scene = true
 shader = ExtResource("8_52dmv")
 shader_parameter/current_foam = SubResource("ViewportTexture_6hq54")
-shader_parameter/history_foam = SubResource("ViewportTexture_52dmv")
-shader_parameter/delta = 0.0275
+shader_parameter/history_foam = SubResource("ViewportTexture_l576r")
+shader_parameter/delta = 0.02777777777777778
 shader_parameter/foam_history_offset = Vector2(0, 0)
 shader_parameter/decay_rate = 0.2
 shader_parameter/erosion_multiplier = 3.0
 shader_parameter/erosion_noise = SubResource("NoiseTexture2D_d0eyj")
-shader_parameter/capture_center = Vector2(71.28906, -33.203125)
+shader_parameter/capture_center = Vector2(-96.67969, 17.578125)
 shader_parameter/capture_coverage = 0.0
 
-[sub_resource type="ViewportTexture" id="ViewportTexture_l576r"]
+[sub_resource type="ViewportTexture" id="ViewportTexture_52dmv"]
 viewport_path = NodePath("HistoryAFar")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_u5eeg"]
 resource_local_to_scene = true
 shader = ExtResource("8_52dmv")
 shader_parameter/current_foam = SubResource("ViewportTexture_6hq54")
-shader_parameter/history_foam = SubResource("ViewportTexture_l576r")
-shader_parameter/delta = 0.029089777777777777
+shader_parameter/history_foam = SubResource("ViewportTexture_52dmv")
+shader_parameter/delta = 0.02777777777777778
 shader_parameter/foam_history_offset = Vector2(0, 0)
 shader_parameter/decay_rate = 0.2
 shader_parameter/erosion_multiplier = 3.0
 shader_parameter/erosion_noise = SubResource("NoiseTexture2D_d0eyj")
-shader_parameter/capture_center = Vector2(71.28906, -33.203125)
+shader_parameter/capture_center = Vector2(-96.67969, 17.578125)
 shader_parameter/capture_coverage = 0.0
 
 [sub_resource type="SphereMesh" id="SphereMesh_l5no5"]
-radius = 1.0
-height = 2.0
+radius = 5.0
+height = 10.0
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_mvh63"]
 resource_local_to_scene = true
@@ -278,7 +279,7 @@ shadow_enabled = true
 environment = SubResource("Environment_jfska")
 
 [node name="Tiles" type="Node3D" parent="." unique_id=1199750735]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 70, 0, -30)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -100, 0, 20)
 
 [node name="Center_128" type="MeshInstance3D" parent="Tiles" unique_id=1198671015]
 cast_shadow = 0
@@ -787,16 +788,15 @@ surface_material_override/0 = SubResource("ShaderMaterial_rfhwr")
 [node name="TopDepth" type="SubViewport" parent="." unique_id=1237803608]
 use_hdr_2d = true
 size = Vector2i(256, 256)
-render_target_update_mode = 0
+render_target_update_mode = 1
 
 [node name="Camera3D" type="Camera3D" parent="TopDepth" unique_id=1324256695]
-transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 71.28906, 10, -33.203125)
-visible = false
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -96.67969, 20, 17.578125)
 cull_mask = 2
 environment = SubResource("Environment_be3v4")
 projection = 1
 size = 150.0
-far = 20.0
+far = 40.0
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="TopDepth/Camera3D" unique_id=642027414]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0010318756, -0.0002450943, -1)
@@ -808,16 +808,15 @@ surface_material_override/0 = SubResource("ShaderMaterial_5me7w")
 [node name="BottomDepth" type="SubViewport" parent="." unique_id=1035603757]
 use_hdr_2d = true
 size = Vector2i(256, 256)
-render_target_update_mode = 0
+render_target_update_mode = 1
 
 [node name="Camera3D" type="Camera3D" parent="BottomDepth" unique_id=1586773813]
-transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 71.28906, -10, -33.203125)
-visible = false
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, -96.67969, -20, 17.578125)
 cull_mask = 2
 environment = SubResource("Environment_jue3d")
 projection = 1
 size = 150.0
-far = 20.0
+far = 40.0
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="BottomDepth/Camera3D" unique_id=803076881]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.028087616, -0.01171875, -1.0517616)
@@ -833,7 +832,6 @@ script = ExtResource("6_wt1e5")
 capture_coverage = 25
 history_a = NodePath("../HistoryA")
 history_b = NodePath("../HistoryB")
-update_hz = 40.0
 
 [node name="ColorRect" type="ColorRect" parent="FoamSubViewport" unique_id=1064412325]
 material = SubResource("ShaderMaterial_udkvx")
@@ -850,7 +848,6 @@ script = ExtResource("6_wt1e5")
 capture_coverage = 150
 history_a = NodePath("../HistoryAFar")
 history_b = NodePath("../HistoryBFar")
-update_hz = 40.0
 
 [node name="ColorRect" type="ColorRect" parent="FoamSubViewportFar" unique_id=959198359]
 material = SubResource("ShaderMaterial_bdn0s")
@@ -920,8 +917,7 @@ rotation_edit_mode = 1
 movie_quit_on_finish = true
 
 [node name="Sphere" type="MeshInstance3D" parent="." unique_id=547641031]
-transform = Transform3D(0.79608595, -0.052809566, -0.6028753, -0.0031937063, 0.99580497, -0.09144613, 0.60517526, 0.07472426, 0.7925777, 0, 0, 0)
-visible = false
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1.0000001, -84.68835, 0.4715848, 2.5459294)
 layers = 3
 mesh = SubResource("SphereMesh_l5no5")
 surface_material_override/0 = SubResource("ShaderMaterial_mvh63")

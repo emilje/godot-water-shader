@@ -7,7 +7,6 @@ extends SubViewport
 @export var history_b: SubViewport
 @export_range(0, 5) var decay_rate: float = 0.2
 @export_range(0, 5) var erosion_multiplier: float = 3.0
-@export_range(1, 120) var update_hz := 60.0
 
 @onready var m_foam: ShaderMaterial = $ColorRect.material
 
@@ -19,13 +18,8 @@ var history_initialized := false
 var foam_texture: Texture2D
 var previous_center := Vector2.ZERO
 var capture_center := Vector2.ZERO
-var elapsed_s := 0.0
 
-func can_update(delta: float):
-	elapsed_s += delta
-	return elapsed_s >= 1/update_hz
-
-func update(center: Vector2) -> void:
+func update(center: Vector2, elapsed_s: float) -> void:
 	if !history_initialized:
 		if !init_history():
 			return
@@ -47,7 +41,6 @@ func update(center: Vector2) -> void:
 	foam_texture = target.get_texture()
 
 	write_a = !write_a
-	elapsed_s = 0
 
 func update_capture_center(center: Vector2) -> void:
 	capture_center = center
@@ -104,7 +97,6 @@ func set_enabled(enabled: bool, updateFoamMaps: Callable) -> void:
 	render_target_update_mode = SubViewport.UPDATE_DISABLED
 	history_a.render_target_update_mode = SubViewport.UPDATE_DISABLED
 	history_b.render_target_update_mode = SubViewport.UPDATE_DISABLED
-	elapsed_s = 0
 
 	if(!enabled):
 		var image = Image.create(1,1,false, Image.FORMAT_R8)
