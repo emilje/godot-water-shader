@@ -1,0 +1,27 @@
+[gd_scene format=3 uid="uid://b233afutndwya"]
+
+[ext_resource type="Script" uid="uid://cntqllktbrmd0" path="res://scripts/buoyancy.gd" id="1_li8ov"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_udkvx"]
+radius = 1.0
+height = 2.0
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_udkvx"]
+radius = 1.0
+
+[node name="BSphere" type="RigidBody3D" unique_id=530145434]
+mass = 2.0
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=168388553]
+mesh = SubResource("SphereMesh_udkvx")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=786183183]
+shape = SubResource("SphereShape3D_udkvx")
+
+[node name="BuoyancyComponent" type="Node3D" parent="." unique_id=2118092443]
+script = ExtResource("1_li8ov")
+sphere_radius = 1.0
+drag_multiplier = 3.0
+metadata/_custom_type_script = "uid://cntqllktbrmd0"
+
+[node name="Point_1" type="Marker3D" parent="BuoyancyComponent" unique_id=2125563399]

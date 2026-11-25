@@ -25,11 +25,11 @@ void fragment() {
 	float noise_erosion = texture(erosion_noise, world_uv * 6.0).r;
 	previous.r -= noise_erosion * delta * erosion_multiplier;
 	if(previous.g > 0.7) {
-		previous.g -= noise_erosion * delta * erosion_multiplier * 0.1;
+		previous.g -= noise_erosion * delta * erosion_multiplier * 0.5;
 	}
 	
 	previous.r *= exp(-decay_rate * delta);
-	previous.g *= exp(-decay_rate * delta * 0.1);
+	previous.g *= exp(-decay_rate * delta * 0.5);
 	
 	previous = max(previous,0.0);
 	

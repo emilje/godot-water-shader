@@ -30,6 +30,7 @@ extends Node3D
 		set_depth_foam_enabled()
 
 var elapsed_s := 0.0
+var ocean_settings: OceanSettings = preload("res://resources/ocean_settings.tres")
 
 func can_update(delta: float) -> bool:
 	elapsed_s += delta
@@ -40,7 +41,15 @@ func _ready() -> void:
 	set_foam_enabled(far_foam, foam_sub_far)
 	set_depth_foam_enabled()
 
+	# Set wave data params
+	ocean_settings.set_shader_params(ocean_material)
+	ocean_settings.changed.connect(on_wave_data_changed)
+
 func _process(delta) -> void:
+	var wave_time := -1.0
+	if !Engine.is_editor_hint():
+		wave_time = Time.get_ticks_msec()/1000.0
+		ocean_material.set_shader_parameter("time", wave_time)
 	var depth_coverage := foam_sub_far.capture_coverage
 	update_patches_center()
 
@@ -52,14 +61,14 @@ func _process(delta) -> void:
 	
 		if(near_foam):
 			foam_sub_near.set_depth_coverage(depth_coverage)
-			foam_sub_near.update(capture_center, elapsed_s)
+			foam_sub_near.update(capture_center, elapsed_s, wave_time)
 			if foam_sub_near.foam_texture != null:
 				ocean_material.set_shader_parameter("foam_map_near", foam_sub_near.foam_texture)
 				ocean_material.set_shader_parameter("foam_coverage", foam_sub_near.capture_coverage)
 
 		if(far_foam):
 			foam_sub_far.set_depth_coverage(depth_coverage)
-			foam_sub_far.update(capture_center, elapsed_s)
+			foam_sub_far.update(capture_center, elapsed_s, wave_time)
 			if foam_sub_far.foam_texture != null:
 				ocean_material.set_shader_parameter("foam_map_far", foam_sub_far.foam_texture)
 				ocean_material.set_shader_parameter("foam_coverage_far", foam_sub_far.capture_coverage)
@@ -138,3 +147,6 @@ func update_patches_center():
 	var snapped_xz = camera_xz.snapped(Vector2.ONE * snap_distance)
 	tiles.global_position.x = snapped_xz.x
 	tiles.global_position.z = snapped_xz.y
+
+func on_wave_data_changed():
+	ocean_settings.set_shader_params(ocean_material)

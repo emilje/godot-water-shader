@@ -29,9 +29,18 @@ uniform bool far_foam_enabled = true;
 uniform bool near_foam_enabled = true;
 uniform bool depth_foam_enabled = true;
 global uniform vec2 flat_point;
+uniform float time = -1.0;
+
+group_uniforms WaveData;
+uniform float wave_angles[16];
+uniform float wave_amplitudes[16];
+uniform float wave_wavelengths[16];
+uniform float wave_speeds[16];
+uniform float wave_steepnesses[16];
+uniform int wave_count;
 
 group_uniforms Pattern;
-uniform sampler2D world_disp_noise: repeat_enable;
+uniform sampler2D amplitude_noise_texture: repeat_enable;
 uniform float disp_noise_uv: hint_range(0,500) = 160.0;
 uniform float smoothstep_low: hint_range(0,1) = 0.2;
 uniform float smoothstep_high: hint_range(0,1) = 0.75;
@@ -45,30 +54,31 @@ uniform vec2 warp_strength = vec2(15.0,10.0);
 
 vec3 gerstner(vec2 pos, float angle, float amplitude, float wavelength, float speed, float steepness,
  inout int noise_to_sample) {
+	float wave_time = time < 0.0 ? TIME : time;
 	angle=radians(angle);
 	vec2 direction = normalize(vec2(sin(-angle), cos(angle)));
 	
 	// Amplitude noise
-    float noise_a = texture(world_disp_noise, pos/disp_noise_uv).r;
+    float noise_a = texture(amplitude_noise_texture, pos/disp_noise_uv).r;
 	float amplitude_noise = smoothstep(smoothstep_low, smoothstep_high,noise_a) * amplitude_effect + 1.0 - amplitude_effect;
 	amplitude *= amplitude_noise;
 	
 	// Domain warping
-	float pos_warp_x = texture(world_disp_noise, pos / warp_uv_x + vec2(TIME * warp_speed)).r;
-	float pos_warp_y = texture(world_disp_noise, pos / warp_uv_y + vec2(TIME * warp_speed)).r;
+	float pos_warp_x = texture(amplitude_noise_texture, pos / warp_uv_x + vec2(wave_time * warp_speed)).r;
+	float pos_warp_y = texture(amplitude_noise_texture, pos / warp_uv_y + vec2(wave_time * warp_speed)).r;
 	
 	vec2 pos_warp = vec2(pos_warp_x, pos_warp_y);
 	pos_warp = (pos_warp * 2.0 - 1.0) * warp_strength;
 	vec2 warped_pos = pos + pos_warp;
 
 	float frequency = TAU / wavelength;
-	float phase = (TIME * speed + dot(direction, warped_pos)) * frequency;
+	float phase = (wave_time * speed + dot(direction, warped_pos)) * frequency;
 	vec3 displacement;
 	displacement.y = sin(phase) * amplitude;
 	displacement.xz = direction * cos(phase) * steepness;
 	
 	if(noise_to_sample > 0){
-		float noise_value = texture(noise, pos * 0.2 + TIME * direction * 0.2).r;
+		float noise_value = texture(noise, pos * 0.2 + wave_time * direction * 0.2).r;
 		displacement.y += noise_value * noise_intensity - noise_intensity/2.0;
 		noise_to_sample--;
 	}
@@ -78,16 +88,17 @@ vec3 gerstner(vec2 pos, float angle, float amplitude, float wavelength, float sp
 
 vec3 wave(vec2 pos, int noise_samples) {
 	int noise_num = noise_samples;
-	vec3 displacement = gerstner(pos, 0.0, 4.3, 120, 5, 0.8, noise_num);
-		displacement += gerstner(pos, -10.0, 4.1, 80, 8, 0.6, noise_num);
-		displacement += gerstner(pos, 15, 0.8, 20, 3, 0.8, noise_num);
-		displacement += gerstner(pos, -45, 0.3, 13, 5, 0.2, noise_num);
+	vec3 displacement = vec3(0);
+	for(int i = 0; i < wave_count; i++) {
+		displacement += gerstner(pos, wave_angles[i], wave_amplitudes[i], wave_wavelengths[i],
+		wave_speeds[i], wave_steepnesses[i], noise_num);
+	}
 		
-		float flat_point_distance = distance(pos, flat_point);
-		if(flat_point_distance < 100.0) {
-			float inten =  smoothstep(5,100, flat_point_distance);
-			displacement *= inten;
-		}
+		//float flat_point_distance = distance(pos, flat_point);
+		//if(flat_point_distance < 100.0) {
+			//float inten =  smoothstep(5,100, flat_point_distance);
+			//displacement *= inten;
+		//}
 	
 	return displacement;
 }
@@ -169,7 +180,7 @@ void vertex() {
 	h_dist = distance(VERTEX, CAMERA_POSITION_WORLD);
 	camera_dist = distance(VERTEX.xz, CAMERA_POSITION_WORLD.xz);
 	
-	VERTEX += wave(VERTEX.xz, 5);
+	VERTEX += wave(VERTEX.xz, 3);
 }
 
 void fragment() {
@@ -180,7 +191,7 @@ void fragment() {
 	// Neighbor sampling normals
 	vec2 pos_x = world_xz + vec2(sampling_distance, 0.0);
 	vec2 pos_z = world_xz + vec2(0.0, sampling_distance);
-	vec3 wave_current = vec3(world_xz.x, 0.0, world_xz.y) + wave(world_xz,3);
+	vec3 wave_current = vec3(world_xz.x, 0.0, world_xz.y) + wave(world_xz, 3);
 	vec3 tangent_x = vec3(pos_x.x, 0.0, pos_x.y) + wave(pos_x, 3) - wave_current;
 	vec3 tangent_z = vec3(pos_z.x, 0.0, pos_z.y) + wave(pos_z, 3) - wave_current;
 	vec3 wave_normal = cross(tangent_z, tangent_x);
@@ -235,13 +246,13 @@ void fragment() {
 	
 	if(d_depth > 0.0) {
 		vec3 tex = texture(screen_texture, d_uv).rgb;
-		
 		//Depth fade
 		tex *= exp(-through_water * absorption_strength * color_absorption);
 		EMISSION = tex;
 	}
 	
 	//Intersection
+	float wave_time = time < 0.0 ? TIME : time;
 	float i_noise = texture(i_noise_texture, world_xz * 0.25 + TIME * 0.02).r;
 	float i_width = 0.02 + sin(TIME * 0.5) * 0.02 + i_noise * 0.04;
 	if(through_water > 0.0 && through_water < i_width) {

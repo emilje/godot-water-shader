@@ -1,0 +1,38 @@
+[gd_scene format=3 uid="uid://b3tp6ir1ck23n"]
+
+[ext_resource type="Script" uid="uid://cntqllktbrmd0" path="res://scripts/buoyancy.gd" id="1_iaw3o"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_udkvx"]
+size = Vector3(2, 2, 6)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_udkvx"]
+size = Vector3(2, 2, 6)
+
+[node name="BCube" type="RigidBody3D" unique_id=365228874]
+mass = 5.0
+angular_damp = 5.0
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1627821342]
+mesh = SubResource("BoxMesh_udkvx")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=247611220]
+shape = SubResource("BoxShape3D_udkvx")
+
+[node name="BuoyancyComponent" type="Node3D" parent="." unique_id=183001877]
+script = ExtResource("1_iaw3o")
+sphere_radius = 1.0
+buoyancy_multiplier = 1.8
+drag_multiplier = 2.4
+metadata/_custom_type_script = "uid://cntqllktbrmd0"
+
+[node name="Point_1" type="Marker3D" parent="BuoyancyComponent" unique_id=1224774402]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3)
+
+[node name="Point_2" type="Marker3D" parent="BuoyancyComponent" unique_id=38164106]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3)
+
+[node name="Point_3" type="Marker3D" parent="BuoyancyComponent" unique_id=1119159740]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0)
+
+[node name="Point_4" type="Marker3D" parent="BuoyancyComponent" unique_id=654893302]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 0)

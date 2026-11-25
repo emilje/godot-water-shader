@@ -1,0 +1,7 @@
+[gd_resource type="NoiseTexture2D" format=3 uid="uid://cx2vyxybady15"]
+
+[ext_resource type="FastNoiseLite" uid="uid://c7xa2voln0t32" path="res://textures/amplitude_noise.tres" id="1_ltsux"]
+
+[resource]
+noise = ExtResource("1_ltsux")
+seamless = true

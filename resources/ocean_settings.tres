@@ -1,0 +1,46 @@
+[gd_resource type="Resource" script_class="OceanSettings" format=3 uid="uid://dadyp2ccgaiyw"]
+
+[ext_resource type="Texture2D" uid="uid://cx2vyxybady15" path="res://textures/amplitude_noise_texture.tres" id="1_a7pxo"]
+[ext_resource type="Script" uid="uid://bsqnn6phoebsd" path="res://resources/OceanSettings.gd" id="1_t3g8u"]
+[ext_resource type="Script" uid="uid://bhybvqyfger0y" path="res://resources/WaveData.gd" id="2_ad5bl"]
+
+[sub_resource type="Resource" id="Resource_ad5bl"]
+script = ExtResource("2_ad5bl")
+amplitude = 2.0
+wavelength = 120.0
+speed = 5.0
+steepness = 0.8
+metadata/_custom_type_script = "uid://bhybvqyfger0y"
+
+[sub_resource type="Resource" id="Resource_a7pxo"]
+script = ExtResource("2_ad5bl")
+angle = -10.0
+amplitude = 1.8
+wavelength = 80.0
+speed = 8.0
+steepness = 0.6
+metadata/_custom_type_script = "uid://bhybvqyfger0y"
+
+[sub_resource type="Resource" id="Resource_m1c8a"]
+script = ExtResource("2_ad5bl")
+angle = 15.0
+amplitude = 0.8
+wavelength = 26.57
+speed = 3.0
+steepness = 0.8
+metadata/_custom_type_script = "uid://bhybvqyfger0y"
+
+[sub_resource type="Resource" id="Resource_xvu3i"]
+script = ExtResource("2_ad5bl")
+angle = -45.0
+amplitude = 0.3
+wavelength = 13.0
+speed = 5.0
+steepness = 0.2
+metadata/_custom_type_script = "uid://bhybvqyfger0y"
+
+[resource]
+script = ExtResource("1_t3g8u")
+waves = Array[ExtResource("2_ad5bl")]([SubResource("Resource_ad5bl"), SubResource("Resource_a7pxo"), SubResource("Resource_m1c8a"), SubResource("Resource_xvu3i")])
+amplitude_effect = 0.4
+metadata/_custom_type_script = "uid://bsqnn6phoebsd"

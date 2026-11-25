@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://ce3rhnytdfndv"]
+
+[ext_resource type="Script" uid="uid://cntqllktbrmd0" path="res://scripts/buoyancy.gd" id="1_we0fp"]
+
+[node name="BuoyancyComponent" type="Node3D" unique_id=2025906471]
+script = ExtResource("1_we0fp")

@@ -18,8 +18,10 @@ var history_initialized := false
 var foam_texture: Texture2D
 var previous_center := Vector2.ZERO
 var capture_center := Vector2.ZERO
+var wave_data_initialized := false
+var ocean_settings: OceanSettings = preload("res://resources/ocean_settings.tres")
 
-func update(center: Vector2, elapsed_s: float) -> void:
+func update(center: Vector2, elapsed_s: float, wave_time: float) -> void:
 	if !history_initialized:
 		if !init_history():
 			return
@@ -34,6 +36,7 @@ func update(center: Vector2, elapsed_s: float) -> void:
 	material.set_shader_parameter("delta", elapsed_s)
 	material.set_shader_parameter("decay_rate", decay_rate)
 	material.set_shader_parameter("erosion_multiplier", erosion_multiplier)
+	m_foam.set_shader_parameter("time", wave_time)
 
 	render_target_update_mode = SubViewport.UPDATE_ONCE
 	target.render_target_update_mode = SubViewport.UPDATE_ONCE
@@ -56,6 +59,10 @@ func update_capture_center(center: Vector2) -> void:
 func update_history_offset(center: Vector2) -> void:
 	if !history_initialized:
 		if !init_history():
+			return
+
+	if !wave_data_initialized:
+		if !init_wave_data():
 			return
 
 	var offset := Vector2.ZERO
@@ -93,6 +100,15 @@ func init_history() -> bool:
 	history_initialized = true
 	return true
 
+func init_wave_data() -> bool:
+	if !is_instance_valid(m_foam):
+		return false
+
+	ocean_settings.set_shader_params(m_foam)
+	ocean_settings.changed.connect(on_wave_data_changed)
+	wave_data_initialized = true
+	return true
+
 func set_enabled(enabled: bool, updateFoamMaps: Callable) -> void:
 	render_target_update_mode = SubViewport.UPDATE_DISABLED
 	history_a.render_target_update_mode = SubViewport.UPDATE_DISABLED
@@ -106,3 +122,6 @@ func set_enabled(enabled: bool, updateFoamMaps: Callable) -> void:
 
 func set_depth_coverage(depth_coverage: float) -> void:
 	m_foam.set_shader_parameter("depth_coverage", depth_coverage)
+
+func on_wave_data_changed():
+	ocean_settings.set_shader_params(m_foam)
